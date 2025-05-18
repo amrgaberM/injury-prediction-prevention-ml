@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AthleteGuard AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body class="nebula">
+  <!-- Loader -->
+  <div class="loader-wrapper">
+    <div class="loader">
+      <div class="space-robot-loader">
+        <div class="robot-core"></div>
+        <div class="robot-panel panel-1"></div>
+        <div class="robot-panel panel-2"></div>
+        <div class="robot-eye"></div>
+        <div class="shockwave"></div>
+        <div class="pulse-ring"></div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-arc"></div>
+      </div>
+      <span>Initializing AI...</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="navbar">
+      <div class="nav-logo">
+        <svg class="space-robot-logo" viewBox="0 0 40 40" aria-label=".team
+        Space Robot Logo">
+          <circle cx="20" cy="20" r="15" fill="url(#robotGradient)" />
+          <circle cx="15" cy="15" r="4" fill="#f0f0ff" />
+          <path d="M10 20 L8 18 M30 20 L32 18" stroke="#c0c0c0" stroke-width="1" />
+          <circle cx="20" cy="20" r="18" fill="none" stroke="#c0c0c0" stroke-width="0.5" opacity="0.5" />
+          <defs>
+            <radialGradient id="robotGradient" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stop-color="#c0c0c0" />
+              <stop offset="100%" stop-color="#3c2f5f" />
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="hamburger" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="calculator.html">Calculator</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="chatbot.html" class="active">Chatbot</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+      <select id="theme-toggle" aria-label="Select theme">
+        <option value="nebula">Nebula</option>
+        <option value="starlight">Starlight</option>
+        <option value="void">Void</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- Chatbot Section -->
+  <section class="section chatbot-section">
+    <canvas id="starfield-canvas"></canvas>
+    <div class="container">
+      <h1 class="header">AthleteGuard AI</h1>
+      <p class="description">Your intelligent assistant for training and injury prevention.</p>
+      <div class="chatbot-container glassmorphism" id="chatbotContainer">
+        <div class="chat-header">
+          <div class="space-robot"></div>
+          <span>AthleteGuard AI</span>
+        </div>
+        <div class="chat-body" id="chat-output"></div>
+        <div class="chat-input-wrapper">
+          <input type="text" id="user-input" placeholder="Ask about training, nutrition, or injuries..." aria-label="Chat input" />
+          <button id="sendButton" aria-label="Send message">➤</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2025 AthleteGuard AI. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Embedded CSS -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #0a0a23 0%, #1a1a3d 100%);
+      color: #f0f0ff;
+      line-height: 1.6;
+      overflow-x: hidden;
+      visibility: visible;
+    }
+
+    /* Loader */
+    .loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a23;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .space-robot-loader {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      animation: loaderAssemble 3s linear forwards;
+    }
+
+    .robot-core {
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, #c0c0c0 50%, #3c2f5f 100%);
+      border-radius: 50%;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      opacity: 0;
+      animation: coreFade 1s ease forwards;
+    }
+
+    .robot-panel {
+      width: 20px;
+      height: 20px;
+      background: #c0c0c0;
+      position: absolute;
+      opacity: 0;
+    }
+
+    .panel-1 {
+      top: 10px;
+      left: 10px;
+      transform: rotate(45deg);
+      animation: panelSlide 1s ease 1s forwards;
+    }
+
+    .panel-2 {
+      bottom: 10px;
+      right: 10px;
+      transform: rotate(-45deg);
+      animation: panelSlide 1s ease 1.5s forwards;
+    }
+
+    .robot-eye {
+      width: 12px;
+      height: 12px;
+      background: #f0f0ff;
+      border-radius: 50%;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      opacity: 0;
+      animation: eyeGlow 0.5s ease 2s forwards;
+    }
+
+    .shockwave {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #c0c0c0;
+      border-radius: 50%;
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      opacity: 0;
+      animation: shockwaveExpand 0.8s ease 2.5s infinite;
+    }
+
+    .pulse-ring {
+      width: 120px;
+      height: 120px;
+      border: 3px solid rgba(192, 192, 192, 0.3);
+      border-radius: 50%;
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      opacity: 0;
+      animation: pulseRing 1.5s ease 3s infinite;
+    }
+
+    @keyframes loaderAssemble {
+      0% { transform: scale(0.5) rotate(0deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+
+    @keyframes coreFade {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes panelSlide {
+      0% { opacity: 0; transform: translateX(-20px) rotate(45deg); }
+      100% { opacity: 1; transform: translateX(0) rotate(45deg); }
+    }
+
+    @keyframes eyeGlow {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shockwaveExpand {
+      0% { opacity: 0.5; transform: scale(0.8); }
+      100% { opacity: 0; transform: scale(1.8); }
+    }
+
+    @keyframes pulseRing {
+      0% { opacity: 0.3; transform: scale(0.7); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+
+    .progress-bar {
+      width: 120px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-arc {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(45deg, #3c2f5f, #c0c0c0);
+      animation: progressFill 3.5s ease-in-out forwards;
+    }
+
+    @keyframes progressFill {
+      0% { width: 0; }
+      100% { width: 100%; }
+    }
+
+    .loader span {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      color: #f0f0ff;
+      letter-spacing: 1px;
+    }
+
+    .loader-wrapper.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Header */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(4px);
+      position: fixed;
+      width: 100%;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .space-robot-logo {
+      width: 30px;
+      height: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .space-robot-logo:hover {
+      transform: rotate(15deg) scale(1.1);
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+    }
+
+    .nav-menu li {
+      margin-left: 20px;
+    }
+
+    .nav-menu a {
+      color: #f0f0ff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-menu a:hover,
+    .nav-menu a.active {
+      color: #c0c0c0;
+    }
+
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      width: 20px;
+      height: 2px;
+      background: #f0f0ff;
+      transition: all 0.3s ease;
+    }
+
+    #theme-toggle {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #f0f0ff;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    #theme-toggle option {
+      background: #1a1a3d;
+      color: #f0f0ff;
+    }
+
+    #theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Chatbot Section */
+    .chatbot-section {
+      min-height: 100vh;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+      position: relative;
+      visibility: visible;
+    }
+
+    #starfield-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.85;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1000px;
+      margin: 0 auto;
+      visibility: visible;
+    }
+
+    .header {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #f0f0ff;
+      text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+    }
+
+    .description {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #c0c0c0;
+    }
+
+    /* Chatbot Container */
+    .chatbot-container {
+      width: 80vw;
+      height: 70vh;
+      max-width: 900px;
+      max-height: 600px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .chatbot-container:hover {
+      box-shadow: 0 4px 20px rgba(192, 192, 192, 0.3);
+    }
+
+    .chat-header {
+      padding: 15px;
+      background: linear-gradient(90deg, #3c2f5f, #1a1a3d);
+      color: #f0f0ff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      border-radius: 15px 15px 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .space-robot {
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle, #c0c0c0 40%, #3c2f5f 100%);
+      border-radius: 50%;
+      position: relative;
+      animation: float 2s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    .space-robot::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #f0f0ff;
+      border-radius: 50%;
+      top: 9px;
+      left: 9px;
+    }
+
+    .space-robot.sending {
+      animation: spin 0.5s linear;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #chat-output {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.3);
+      visibility: visible;
+      min-height: 200px;
+      display: block;
+      text-align: left;
+    }
+
+    #chat-output p {
+      margin-bottom: 15px;
+      font-size: 15px;
+      line-height: 1.5;
+      opacity: 1;
+      position: relative;
+      display: block;
+      visibility: visible;
+    }
+
+    #chat-output p:nth-child(odd) {
+      color: #c0c0c0;
+      background: rgba(192, 192, 192, 0.1);
+      padding: 10px 15px;
+      border-radius: 12px 12px 0 12px;
+      max-width: 70%;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    #chat-output p:nth-child(even) {
+      color: #f0f0ff;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 15px;
+      border-radius: 12px 12px 12px 0;
+      max-width: 70%;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0 0 15px 15px;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #f0f0ff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #user-input:focus {
+      border-color: #c0c0c0;
+      box-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+    }
+
+    #user-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    #sendButton {
+      background: linear-gradient(45deg, #3c2f5f, #c0c0c0);
+      color: #0a0a23;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s ease;
+      pointer-events: auto;
+    }
+
+    #sendButton:hover {
+      transform: scale(1.05);
+    }
+
+    /* Glassmorphism */
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 15px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #c0c0c0;
+    }
+
+    /* Theme Styles */
+    body.starlight {
+      background: linear-gradient(135deg, #d9d9e6 0%, #f0f0f5 100%);
+      color: #1a1a3d;
+    }
+
+    body.starlight .navbar,
+    body.starlight .chatbot-container,
+    body.starlight .footer {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    body.starlight .header {
+      color: #3c2f5f;
+      text-shadow: none;
+    }
+
+    body.starlight .nav-menu a {
+      color: #1a1a3d;
+    }
+
+    body.starlight .nav-menu a:hover,
+    body.starlight .nav-menu a.active,
+    body.starlight #chat-output p:nth-child(odd) {
+      color: #3c2f5f;
+    }
+
+    body.starlight .chat-header,
+    body.starlight #sendButton {
+      background: linear-gradient(45deg, #3c2f5f, #c0c0c0);
+      color: #f0f0ff;
+    }
+
+    body.starlight .space-robot {
+      background: radial-gradient(circle, #c0c0c0 40%, #3c2f5f 100%);
+    }
+
+    body.starlight #user-input {
+      color: #1a1a3d;
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    body.starlight #user-input:focus {
+      border-color: #3c2f5f;
+      box-shadow: 0 0 5px rgba(60, 47, 95, 0.5);
+    }
+
+    body.starlight #user-input::placeholder {
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    body.starlight .footer {
+      color: #3c2f5f;
+    }
+
+    body.starlight #theme-toggle {
+      background: rgba(0, 0, 0, 0.15);
+      color: #3c2f5f;
+    }
+
+    body.starlight #theme-toggle option {
+      background: #f0f0f5;
+      color: #1a1a3d;
+    }
+
+    body.void {
+      background: linear-gradient(135deg, #000014 0%, #0a0a23 100%);
+    }
+
+    body.void .header {
+      color: #c0c0c0;
+      text-shadow: 0 0 5px rgba(192, 192, 192, 0.7);
+    }
+
+    body.void .nav-menu a:hover,
+    body.void .nav-menu a.active,
+    body.void #chat-output p:nth-child(odd) {
+      color: #c0c0c0;
+    }
+
+    body.void .chat-header,
+    body.void #sendButton {
+      background: linear-gradient(45deg, #0a0a23, #c0c0c0);
+    }
+
+    body.void #user-input:focus {
+      border-color: #c0c0c0;
+      box-shadow: 0 0 5px rgba(192, 192, 192, 0.7);
+    }
+
+    body.void #theme-toggle {
+      background: rgba(255, 255, 255, 0.15);
+      color: #f0f0ff;
+    }
+
+    body.void #theme-toggle option {
+      background: #0a0a23;
+      color: #f0f0ff;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(4px);
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .nav-menu.active {
+        display: flex;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .header {
+        font-size: 32px;
+      }
+
+      .chatbot-container {
+        width: 90vw;
+        height: 65vh;
+        max-height: 550px;
+      }
+
+      .space-robot-logo {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  </style>
+
+  <!-- Embedded JavaScript -->
+  <script>
+    console.log('Script loaded');
+
+    try {
+      /* Utility Functions */
+      const utils = {
+        sanitizeInput(input) {
+          console.log('Sanitizing input:', input);
+          return input.replace(/</g, '<').replace(/>/g, '>');
+        },
+        debounce(func, wait) {
+          let timeout;
+          return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+          };
+        },
+        formatTimestamp() {
+          const now = new Date();
+          return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        },
+        displayError(message) {
+          const chatOutput = document.getElementById('chat-output');
+          if (chatOutput) {
+            const errorMsg = document.createElement('p');
+            errorMsg.innerHTML = `<strong>AthleteGuard AI:</strong> Client error: ${utils.sanitizeInput(message)}. Please refresh and try again. <small>(${utils.formatTimestamp()})</small>`;
+            chatOutput.appendChild(errorMsg);
+            chatOutput.scrollTo({ top: chatOutput.scrollHeight, behavior: 'smooth' });
+            console.log('Displayed client error in chat');
+          }
+        },
+      };
+
+      /* Loader Fade-out */
+      function hideLoader() {
+        try {
+          console.log('Attempting to hide loader');
+          const loader = document.querySelector('.loader-wrapper');
+          if (!loader) {
+            console.error('Loader not found');
+            return;
+          }
+          loader.classList.add('fade-out');
+          console.log('Added fade-out class to loader');
+          setTimeout(() => {
+            loader.style.display = 'none';
+            console.log('Loader hidden');
+            document.body.style.visibility = 'visible';
+            const chatbotSection = document.querySelector('.chatbot-section');
+            if (chatbotSection) {
+              chatbotSection.style.display = 'flex';
+              console.log('Chatbot section set to visible');
+            }
+          }, 500);
+        } catch (error) {
+          console.error('Loader hide error:', error);
+          utils.displayError(error.message);
+        }
+      }
+
+      /* Nebula Starfield Background */
+      function setupStarfield() {
+        try {
+          console.log('Initializing starfield');
+          const canvas = document.getElementById('starfield-canvas');
+          if (!canvas) {
+            console.error('Starfield canvas not found');
+            return;
+          }
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            console.error('Canvas context not available');
+            return;
+          }
+
+          function setCanvasSize() {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            ctx.scale(dpr, dpr);
+          }
+          setCanvasSize();
+
+          let starsArray = [];
+          let shootingStars = [];
+          let nebulae = [];
+          const numberOfStars = 150;
+          const numberOfShootingStars = 2;
+          const numberOfNebulae = 3;
+
+          class Star {
+            constructor(x, y, size, speed, color, layer) {
+              this.x = x;
+              this.y = y;
+              this.size = size;
+              this.speed = speed;
+              this.color = color;
+              this.layer = layer;
+              this.opacity = Math.random() * 0.5 + 0.5;
+            }
+            update() {
+              this.x -= this.speed * this.layer;
+              if (this.x < 0) this.x = canvas.width / (window.devicePixelRatio || 1);
+              this.opacity = Math.sin(Date.now() * 0.001 + this.x) * 0.3 + 0.5;
+            }
+            draw() {
+              ctx.globalAlpha = this.opacity;
+              ctx.fillStyle = this.color;
+              ctx.beginPath();
+              ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.globalAlpha = 1;
+            }
+          }
+
+          class ShootingStar {
+            constructor() {
+              this.x = canvas.width / (window.devicePixelRatio || 1);
+              this.y = Math.random() * (canvas.height / (window.devicePixelRatio || 1));
+              this.speedX = -(Math.random() * 5 + 5);
+              this.speedY = Math.random() * 2 - 1;
+              this.length = Math.random() * 50 + 20;
+              this.opacity = 1;
+            }
+            update() {
+              this.x += this.speedX;
+              this.y += this.speedY;
+              this.opacity -= 0.02;
+              if (this.opacity <= 0) {
+                this.x = canvas.width / (window.devicePixelRatio || 1);
+                this.y = Math.random() * (canvas.height / (window.devicePixelRatio || 1));
+                this.speedX = -(Math.random() * 5 + 5);
+                this.speedY = Math.random() * 2 - 1;
+                this.length = Math.random() * 50 + 20;
+                this.opacity = 1;
+              }
+            }
+            draw() {
+              ctx.globalAlpha = this.opacity;
+              ctx.strokeStyle = '#f0f0ff';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(this.x, this.y);
+              ctx.lineTo(this.x + this.length * this.speedX / 10, this.y + this.length * this.speedY / 10);
+              ctx.stroke();
+              ctx.globalAlpha = 1;
+            }
+          }
+
+          class Nebula {
+            constructor(x, y, size, color) {
+              this.x = x;
+              this.y = y;
+              this.size = size;
+              this.color = color;
+              this.opacity = Math.random() * 0.2 + 0.1;
+            }
+            update() {
+              this.opacity = Math.sin(Date.now() * 0.0005 + this.x) * 0.1 + 0.2;
+            }
+            draw() {
+              ctx.globalAlpha = this.opacity;
+              ctx.fillStyle = this.color;
+              ctx.beginPath();
+              ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+              ctx.filter = 'blur(20px)';
+              ctx.fill();
+              ctx.filter = 'none';
+              ctx.globalAlpha = 1;
+            }
+          }
+
+          function initStarfield() {
+            starsArray = [];
+            shootingStars = [];
+            nebulae = [];
+            const colors = ['#f0f0ff', '#c0c0c0', '#3c2f5f'];
+            const nebulaColors = ['rgba(60, 47, 95, 0.5)', 'rgba(26, 26, 61, 0.5)'];
+            for (let i = 0; i < numberOfStars; i++) {
+              const x = Math.random() * canvas.width / (window.devicePixelRatio || 1);
+              const y = Math.random() * canvas.height / (window.devicePixelRatio || 1);
+              const size = Math.random() * (i % 2 === 0 ? 1 : 2);
+              const speed = Math.random() * 0.5 + 0.1;
+              const color = colors[Math.floor(Math.random() * colors.length)];
+              const layer = Math.random() * 0.5 + 0.5;
+              starsArray.push(new Star(x, y, size, speed, color, layer));
+            }
+            for (let i = 0; i < numberOfShootingStars; i++) {
+              shootingStars.push(new ShootingStar());
+            }
+            for (let i = 0; i < numberOfNebulae; i++) {
+              const x = Math.random() * canvas.width / (window.devicePixelRatio || 1);
+              const y = Math.random() * canvas.height / (window.devicePixelRatio || 1);
+              const size = Math.random() * 100 + 50;
+              const color = nebulaColors[Math.floor(Math.random() * nebulaColors.length)];
+              nebulae.push(new Nebula(x, y, size, color));
+            }
+          }
+
+          function animateStarfield() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            nebulae.forEach(nebula => {
+              nebula.update();
+              nebula.draw();
+            });
+            starsArray.forEach(star => {
+              star.update();
+              star.draw();
+            });
+            shootingStars.forEach(star => {
+              star.update();
+              star.draw();
+            });
+            requestAnimationFrame(animateStarfield);
+          }
+
+          initStarfield();
+          animateStarfield();
+
+          window.addEventListener('resize', utils.debounce(() => {
+            setCanvasSize();
+            initStarfield();
+          }, 200));
+        } catch (error) {
+          console.error('Starfield setup error:', error);
+          utils.displayError(error.message);
+        }
+      }
+
+      /* Chatbot Setup */
+      function setupChatbot() {
+        try {
+          const chatOutput = document.getElementById('chat-output');
+          const userInput = document.getElementById('user-input');
+          const sendButton = document.getElementById('sendButton');
+
+          console.log('Checking DOM elements:', { chatOutput, userInput, sendButton });
+          if (!chatOutput || !userInput || !sendButton) {
+            console.error('Missing DOM elements:', { chatOutput, userInput, sendButton });
+            utils.displayError('Chatbot initialization failed: Missing DOM elements');
+            return false;
+          }
+
+          userInput.focus();
+          console.log('User input focused');
+
+          let isProcessing = false;
+          const processedMessages = new Set();
+
+          function clearInput() {
+            console.log('Clearing input');
+            userInput.value = '';
+            userInput.focus();
+            userInput.dispatchEvent(new Event('input'));
+            setTimeout(() => {
+              if (userInput.value !== '') {
+                console.warn('Fallback: Forcing input clear');
+                userInput.value = '';
+              }
+            }, 100);
+          }
+
+          const sendMessage = async (message, eventType, messageId) => {
+            console.log(`Processing message [${messageId}] (via ${eventType}):`, message);
+            if (isProcessing || processedMessages.has(messageId)) {
+              console.log(`Skipping duplicate message [${messageId}]: isProcessing=${isProcessing}`);
+              return;
+            }
+            processedMessages.add(messageId);
+            isProcessing = true;
+
+            const input = message.trim();
+            console.log('Validating message:', input);
+            if (!input || typeof input !== 'string' || input.length === 0) {
+              console.warn(`Invalid input [${messageId}], skipping request`);
+              isProcessing = false;
+              processedMessages.delete(messageId);
+              return;
+            }
+
+            try {
+              userInput.disabled = true;
+              sendButton.disabled = true;
+              const spaceRobot = document.querySelector('.space-robot');
+              if (spaceRobot) spaceRobot.classList.add('sending');
+
+              clearInput();
+
+              const chatOutput = document.getElementById('chat-output');
+              if (!chatOutput) {
+                throw new Error(`chat-output not found during sendMessage [${messageId}]`);
+              }
+
+              const userMsg = document.createElement('p');
+              userMsg.innerHTML = `<strong>You:</strong> ${utils.sanitizeInput(input)} <small>(${utils.formatTimestamp()})</small>`;
+              console.log(`Appending user message [${messageId}] to chat-output`);
+              chatOutput.appendChild(userMsg);
+              chatOutput.scrollTo({ top: chatOutput.scrollHeight, behavior: 'smooth' });
+
+              const payload = { message: input };
+              console.log(`Fetch initiated [${messageId}]:`, payload);
+              const response = await fetch('http://127.0.0.1:8000/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: AbortSignal.timeout(5000),
+              });
+              console.log(`Fetch completed [${messageId}]:`, { status: response.status, ok: response.ok });
+
+              if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+              }
+
+              const data = await response.json();
+              console.log(`Response data [${messageId}]:`, data);
+
+              if (data.error) {
+                throw new Error(data.error);
+              }
+
+              if (!data.response) {
+                throw new Error('No response field in data');
+              }
+
+              const botMsg = document.createElement('p');
+              botMsg.innerHTML = `<div class="space-robot"></div><strong>AthleteGuard AI:</strong> ${utils.sanitizeInput(data.response)} <small>(${utils.formatTimestamp()})</small>`;
+              console.log(`Appending bot message [${messageId}] to chat-output`);
+              chatOutput.appendChild(botMsg);
+              chatOutput.scrollTo({ top: chatOutput.scrollHeight, behavior: 'smooth' });
+
+              if (spaceRobot) spaceRobot.classList.remove('sending');
+            } catch (error) {
+              console.error(`Chat error [${messageId}]:`, error.message);
+              const chatOutput = document.getElementById('chat-output');
+              if (chatOutput) {
+                const errorMsg = document.createElement('p');
+                errorMsg.innerHTML = `<div class="space-robot"></div><strong>AthleteGuard AI:</strong> Error: ${utils.sanitizeInput(error.message)}. Please try again. <small>(${utils.formatTimestamp()})</small>`;
+                console.log(`Appending error message [${messageId}] to chat-output`);
+                chatOutput.appendChild(errorMsg);
+                chatOutput.scrollTo({ top: chatOutput.scrollHeight, behavior: 'smooth' });
+              }
+              clearInput();
+            } finally {
+              userInput.disabled = false;
+              sendButton.disabled = false;
+              clearInput();
+              setTimeout(() => {
+                isProcessing = false;
+                console.log(`Reset isProcessing [${messageId}]`);
+              }, 500);
+            }
+          };
+
+          console.log('Removing old listeners');
+          const oldKeypress = userInput.__keypressHandler;
+          const oldClick = sendButton.__clickHandler;
+          if (oldKeypress) userInput.removeEventListener('keypress', oldKeypress);
+          if (oldClick) sendButton.removeEventListener('click', oldClick);
+
+          const handleKeypress = (e) => {
+            console.log('Keypress event:', e.key);
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.stopPropagation();
+              const messageId = Date.now() + '-keypress';
+              console.log(`Enter key pressed, sending message [${messageId}]`);
+              sendMessage(userInput.value, 'keypress', messageId);
+            }
+          };
+
+          const handleClick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const messageId = Date.now() + '-click';
+            console.log(`Send button clicked, sending message [${messageId}]`);
+            sendMessage(userInput.value, 'click', messageId);
+          };
+
+          userInput.__keypressHandler = handleKeypress;
+          sendButton.__clickHandler = handleClick;
+
+          console.log('Attaching new listeners');
+          userInput.addEventListener('keypress', handleKeypress);
+          sendButton.addEventListener('click', handleClick);
+
+          console.log('Event listeners attached');
+          return true;
+        } catch (error) {
+          console.error('Chatbot setup error:', error);
+          utils.displayError(error.message);
+          return false;
+        }
+      }
+
+      /* Initial Setup */
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM content loaded');
+        try {
+          setTimeout(hideLoader, 3500);
+          setTimeout(() => {
+            const loader = document.querySelector('.loader-wrapper');
+            if (loader && loader.style.display !== 'none') {
+              console.warn('Fallback: Forcing loader hide');
+              loader.style.display = 'none';
+              document.body.style.visibility = 'visible';
+              const chatbotSection = document.querySelector('.chatbot-section');
+              if (chatbotSection) chatbotSection.style.display = 'flex';
+            }
+          }, 4500);
+
+          setupStarfield();
+
+          const hamburger = document.querySelector('.hamburger');
+          const navMenu = document.querySelector('.nav-menu');
+          if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+              navMenu.classList.toggle('active');
+              hamburger.classList.toggle('active');
+              console.log('Hamburger menu toggled');
+            });
+          }
+
+          const themeToggle = document.getElementById('theme-toggle');
+          if (themeToggle) {
+            themeToggle.addEventListener('change', () => {
+              document.body.className = themeToggle.value;
+              console.log('Theme changed to:', themeToggle.value);
+            });
+          }
+
+          if (!setupChatbot()) {
+            console.warn('Chatbot setup failed, retrying in 500ms');
+            setTimeout(setupChatbot, 500);
+          }
+        } catch (error) {
+          console.error('DOMContentLoaded error:', error);
+          utils.displayError(error.message);
+        }
+      });
+
+      /* Fallback Setup */
+      setTimeout(() => {
+        console.log('Running fallback chatbot setup');
+        setupChatbot();
+      }, 1000);
+    } catch (error) {
+      console.error('Global script error:', error);
+      utils.displayError(error.message);
+    }
+  </script>
+</body>
+</html>

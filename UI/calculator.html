@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Injury Prediction System - AI-Driven Athlete Risk Assessment">
+  <title>Injury Prediction System - Advanced Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* CSS Variables */
+    :root {
+      --primary-color: #00d4ff;
+      --secondary-color: #ff00aa;
+      --accent-color: #7b00ff;
+      --error-color: #ff3366;
+      --success-color: #00ff99;
+      --dark-bg: #0c0e1a;
+      --card-bg: rgba(20, 25, 40, 0.6);
+      --holo-glow: rgba(0, 212, 255, 0.3);
+      --text-primary: #e6f0ff;
+      --text-secondary: #a0b0cc;
+      --card-shadow: 0 6px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--holo-glow);
+      --card-shadow-hover: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--primary-color);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      --border-radius-sm: 12px;
+      --border-radius-md: 16px;
+      --border-radius-lg: 24px;
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-xxl: 48px;
+    }
+
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(145deg, var(--dark-bg) 0%, #080b16 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Particle Background */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1.2px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+      padding: var(--space-xl);
+      background: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      border: 1px solid var(--holo-glow);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      animation: pulse 4s infinite;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      color: var(--primary-color);
+      text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--secondary-color);
+      margin-bottom: var(--space-md);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    header p {
+      font-size: 1.3rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.6px;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      color: var(--primary-color);
+      margin-bottom: var(--space-lg);
+      position: relative;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), transparent);
+      animation: slide 3s infinite;
+    }
+
+    h3 {
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+    }
+
+    h4 {
+      font-size: 1.3rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      margin-bottom: var(--space-lg);
+      background: var(--card-bg);
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      width: 0;
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+      text-align: center;
+    }
+
+    /* Form Styles */
+    .form-section {
+      background: var(--card-bg);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--holo-glow);
+      transform: perspective(1000px) rotateX(0deg);
+      transition: var(--transition);
+    }
+
+    .form-section:hover {
+      transform: perspective(1000px) rotateX(2deg);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .form-section-header {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md);
+      background: linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(0, 212, 255, 0.1));
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--space-md);
+      transition: var(--transition);
+    }
+
+    .form-section-header:hover {
+      background: linear-gradient(45deg, rgba(0, 212, 255, 0.2), rgba(255, 0, 170, 0.2));
+    }
+
+    .form-section-header h3 {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      text-shadow: 0 0 10px var(--holo-glow);
+    }
+
+    .form-section-header::after {
+      content: '▼';
+      color: var(--secondary-color);
+      font-size: 1.1rem;
+      transition: var(--transition);
+    }
+
+    .form-section.collapsed .form-section-header::after {
+      transform: rotate(180deg);
+    }
+
+    .form-section.collapsed .form-grid {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0;
+      opacity: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-lg);
+      padding: var(--space-md);
+      max-height: 2000px;
+      opacity: 1;
+      transition: max-height 0.6s ease, padding 0.3s ease, opacity 0.3s ease;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: var(--space-md);
+    }
+
+    label {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-xs);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: var(--transition);
+      display: inline-block;
+      position: relative;
+    }
+
+    input, select {
+      padding: 16px 18px;
+      border: 1px solid var(--holo-glow);
+      border-radius: var(--border-radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      transition: var(--transition);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      appearance: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 20px var(--holo-glow);
+      background: rgba(0, 212, 255, 0.15);
+      outline: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2300d4ff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 36px;
+    }
+
+    select option {
+      background: #1c2526;
+      color: var(--text-primary);
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+      transition: opacity 0.3s;
+    }
+
+    input:focus::placeholder {
+      opacity: 0;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      outline: none;
+      padding: 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--holo-glow);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--holo-glow);
+    }
+
+    .slider-value {
+      display: block;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-top: var(--space-xs);
+      text-align: center;
+    }
+
+    .form-group.error input,
+    .form-group.error select {
+      border-color: var(--error-color);
+      box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+      animation: shake 0.4s;
+    }
+
+    .form-group.success input,
+    .form-group.success select {
+      border-color: var(--success-color);
+      box-shadow: 0 0 15px rgba(0, 255, 153, 0.4);
+    }
+
+    .validation-message {
+      font-size: 0.95rem;
+      position: absolute;
+      bottom: -24px;
+      left: 0;
+      transition: var(--transition);
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .validation-message.error {
+      color: var(--error-color);
+    }
+
+    .validation-message.success {
+      color: var(--success-color);
+    }
+
+    /* Tooltip Styles */
+    .tooltip-icon {
+      position: relative;
+      display: inline-block;
+      margin-left: var(--space-xs);
+      color: var(--primary-color);
+      cursor: help;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 50%;
+      background: var(--holo-glow);
+      transition: var(--transition);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .tooltip-icon::after {
+      content: '?';
+      font-weight: bold;
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      text-align: center;
+      padding: var(--space-sm);
+      border-radius: var(--border-radius-sm);
+      position: absolute;
+      z-index: 10;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: opacity 0.3s, visibility 0.3s;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--holo-glow);
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .tooltip-text::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -7px;
+      border-width: 7px;
+      border-style: solid;
+      border-color: var(--dark-bg) transparent transparent transparent;
+    }
+
+    .tooltip-icon:hover .tooltip-text,
+    .tooltip-icon.tooltip-active .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+
+    /* Buttons */
+    .submit-button, .action-button, .learn-more-btn {
+      padding: 18px 36px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      border-radius: 50px;
+      color: var(--text-primary);
+      font-size: 1.3rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 25px var(--holo-glow);
+      position: relative;
+      overflow: hidden;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1.5px;
+    }
+
+    .submit-button::before, .action-button::before, .learn-more-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    .submit-button:hover, .action-button:hover, .learn-more-btn:hover {
+      background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px var(--holo-glow);
+    }
+
+    .submit-button:hover::before, .action-button:hover::before, .learn-more-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .submit-button:active, .action-button:active, .learn-more-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-button, .action-button {
+      display: block;
+      margin: var(--space-xl) auto;
+      min-width: 260px;
+    }
+
+    .learn-more-btn {
+      padding: 14px 28px;
+      font-size: 1.1rem;
+    }
+
+    /* Result Container */
+    .result-container {
+      margin-top: var(--space-xl);
+      padding: var(--space-xl);
+      background: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--holo-glow);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s, transform 0.7s;
+    }
+
+    .result-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+      display: block;
+    }
+
+    /* Summary Card */
+    .summary-card {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      align-items: center;
+      margin-bottom: var(--space-xl);
+      background: var(--card-bg);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      transform: perspective(1000px) rotateX(0deg);
+    }
+
+    .summary-card:hover {
+      box-shadow: var(--card-shadow-hover);
+      transform: perspective(1000px) rotateX(2deg);
+    }
+
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .summary-card:hover::before {
+      opacity: 1;
+    }
+
+    .summary-item {
+      flex: 1;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .summary-label {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: var(--space-xs);
+    }
+
+    .summary-value {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--holo-glow);
+    }
+
+    /* Gauge Styles */
+    .summary-gauge {
+      position: relative;
+      margin: var(--space-md) auto;
+    }
+
+    .gauge-svg {
+      width: 180px;
+      height: 180px;
+      transform: rotate(-90deg);
+      filter: drop-shadow(0 0 12px var(--holo-glow));
+    }
+
+    .radial-gauge {
+      width: 140px;
+      height: 140px;
+      margin: var(--space-md) auto;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-base {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 12;
+    }
+
+    .gauge-value {
+      fill: none;
+      stroke: url(#gaugeGradient);
+      stroke-width: 12;
+      stroke-linecap: round;
+      transition: stroke-dasharray 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      font-size: 2rem;
+      color: var(--text-primary);
+      font-weight: 700;
+      text-shadow: 0 0 15px var(--holo-glow);
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .gauge-text::after {
+      content: '%';
+      font-size: 1.2rem;
+      vertical-align: super;
+      margin-left: 4px;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      padding: var(--space-lg);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      transition: var(--transition);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--holo-glow);
+      transform: perspective(1000px) rotateX(0deg);
+    }
+
+    .metric-card:hover {
+      transform: perspective(1000px) rotateX(2deg);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top left, var(--holo-glow), transparent 70%);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .metric-value {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      margin-top: var(--space-sm);
+      font-weight: 500;
+      text-shadow: 0 0 8px var(--holo-glow);
+    }
+
+    .tooltip {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-top: var(--space-sm);
+      font-family: 'Roboto', sans-serif;
+      line-height: 1.5;
+    }
+
+    /* Recommendations */
+    .recommendations {
+      margin-top: var(--space-xl);
+    }
+
+    .recommendation-category {
+      margin-bottom: var(--space-lg);
+    }
+
+    .category-title {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      margin-bottom: var(--space-md);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px var(--holo-glow);
+    }
+
+    .category-title::before {
+      content: '▶';
+      margin-right: var(--space-sm);
+      color: var(--secondary-color);
+      transition: transform 0.3s;
+    }
+
+    .category-title:hover {
+      color: var(--secondary-color);
+    }
+
+    .category-title.active::before {
+      transform: rotate(90deg);
+    }
+
+    .recommendation-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .recommendation-item {
+      background: var(--card-bg);
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      transition: var(--transition);
+      border-left: 6px solid var(--primary-color);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(10px);
+      transform: perspective(1000px) rotateX(0deg);
+    }
+
+    .recommendation-item:hover {
+      background: var(--holo-glow);
+      box-shadow: var(--card-shadow-hover);
+      transform: perspective(1000px) rotateX(1deg);
+      border-left-color: var(--secondary-color);
+    }
+
+    .recommendation-item.completed {
+      opacity: 0.7;
+      text-decoration: line-through;
+      border-left-color: var(--success-color);
+    }
+
+    .rec-checkbox {
+      width: 26px;
+      height: 26px;
+      accent-color: var(--primary-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .rec-checkbox:hover {
+      transform: scale(1.2);
+    }
+
+    .priority-indicator {
+      font-size: 1.4rem;
+      color: var(--secondary-color);
+      min-width: 30px;
+      text-align: center;
+      font-weight: bold;
+      text-shadow: 0 0 8px var(--holo-glow);
+    }
+
+    .recommendation-summary {
+      flex: 1;
+      font-size: 1.2rem;
+      line-height: 1.5;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .recommendation-detail {
+      max-height: 0;
+      overflow: hidden;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-top: var(--space-sm);
+      padding: 0 var(--space-sm);
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: var(--border-radius-sm);
+      transition: all 0.5s ease-out;
+      line-height: 1.6;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .recommendation-item.expandable:hover .recommendation-detail,
+    .recommendation-item.expandable .recommendation-detail[style*="block"] {
+      max-height: 300px;
+      padding: var(--space-sm);
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--secondary-color); }
+      100% { text-shadow: 0 0 30px var(--primary-color), 0 0 40px var(--secondary-color); }
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-section, .metric-card, .summary-card, .recommendation-item {
+      animation: fadeInUp 0.7s ease forwards;
+      opacity: 0;
+    }
+
+    .form-section:nth-child(1) { animation-delay: 0.1s; }
+    .form-section:nth-child(2) { animation-delay: 0.2s; }
+    .form-section:nth-child(3) { animation-delay: 0.3s; }
+    .form-section:nth-child(4) { animation-delay: 0.4s; }
+    .form-section:nth-child(5) { animation-delay: 0.5s; }
+
+    /* Media Queries */
+    @media (max-width: 1024px) {
+      .form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-grid, .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-card {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .summary-item {
+        min-width: 100%;
+        margin-bottom: var(--space-md);
+      }
+
+      .gauge-svg {
+        width: 160px;
+        height: 160px;
+      }
+
+      .radial-gauge {
+        width: 120px;
+        height: 120px;
+      }
+
+      .gauge-text {
+        font-size: 1.8rem;
+      }
+
+      .submit-button, .action-button {
+        width: 90%;
+        max-width: 340px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .tooltip-text {
+        top: auto;
+        bottom: calc(100% + 8px);
+      }
+
+      .tooltip-text::after {
+        top: 100%;
+        border-color: transparent transparent var(--dark-bg) transparent;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: var(--space-md);
+      }
+
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      h2 {
+        font-size: 1.7rem;
+      }
+
+      .form-group {
+        margin-bottom: var(--space-sm);
+      }
+
+      input, select {
+        font-size: 1rem;
+        padding: 14px;
+      }
+
+      .tooltip-icon {
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 0.8rem;
+      }
+
+      .tooltip-text {
+        width: 160px;
+        font-size: 0.9rem;
+      }
+
+      .gauge-svg {
+        width: 140px;
+        height: 140px;
+      }
+
+      .radial-gauge {
+        width: 100px;
+        height: 100px;
+      }
+
+      .gauge-text {
+        font-size: 1.6rem;
+      }
+
+      .submit-button, .action-button {
+        font-size: 1.2rem;
+        padding: 16px 28px;
+      }
+
+      .metric-card {
+        padding: var(--space-md);
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      #particles {
+        display: none;
+      }
+
+      header, .result-container, .summary-card, .metric-card, .recommendation-item, .form-section, .progress-container {
+        background: white;
+        box-shadow: none;
+        border: 1px solid #bbb;
+        page-break-inside: avoid;
+      }
+
+      h1, h2, h3, h4 {
+        color: #111;
+        text-shadow: none;
+      }
+
+      .summary-value, .metric-value {
+        color: #00b8a9;
+      }
+
+      .gauge-svg, .radial-gauge {
+        filter: none;
+      }
+
+      .gauge-value {
+        stroke: #00b8a9;
+      }
+
+      input, select {
+        border: 1px solid #111;
+        background: white;
+        color: black;
+      }
+
+      .submit-button, .action-button, .tooltip-icon {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="container">
+    <header>
+      <h1>Injury Prediction System</h1>
+      <p>Next-gen AI-powered athlete risk assessment for optimal performance.</p>
+    </header>
+    <main>
+      <form id="predictionForm" aria-live="polite">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-text">Form Completion: <span id="progress-percent">0%</span></div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+        <!-- Personal Information -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <h3>Personal Information</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="Age">Age<span class="tooltip-icon" data-tooltip="Enter the athlete's age in years (10-100)" id="Age-tooltip"></span></label>
+              <input type="number" id="Age" name="Age" min="10" max="100" required aria-describedby="Age-validation Age-tooltip">
+              <span id="Age-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Gender">Gender<span class="tooltip-icon" data-tooltip="Select the athlete's gender" id="Gender-tooltip"></span></label>
+              <select id="Gender" name="Gender" required aria-describedby="Gender-validation Gender-tooltip">
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <span id="Gender-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Sport_Type">Sport Type<span class="tooltip-icon" data-tooltip="Choose the primary sport the athlete participates in" id="Sport_Type-tooltip"></span></label>
+              <select id="Sport_Type" name="Sport_Type" required aria-describedby="Sport_Type-validation Sport_Type-tooltip">
+                <option value="">Select</option>
+                <option value="Football">Football</option>
+                <option value="Basketball">Basketball</option>
+                <option value="Swimming">Swimming</option>
+                <option value="Running">Running</option>
+                <option value="Tennis">Tennis</option>
+                <option value="Volleyball">Volleyball</option>
+              </select>
+              <span id="Sport_Type-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Experience_Level">Experience Level<span class="tooltip-icon" data-tooltip="Select the athlete's experience level in their sport" id="Experience_Level-tooltip"></span></label>
+              <select id="Experience_Level" name="Experience_Level" required aria-describedby="Experience_Level-validation Experience_Level-tooltip">
+                <option value="">Select</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Professional">Professional</option>
+              </select>
+              <span id="Experience_Level-validation" class="validation-message"></span>
+            </div>
+          </div>
+        </div>
+        <!-- Training Metrics -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <h3>Training Metrics</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="Total_Weekly_Training_Hours">Weekly Training Hours<span class="tooltip-icon" data-tooltip="Total hours spent training per week (0-50)" id="Total_Weekly_Training_Hours-tooltip"></span></label>
+              <input type="number" id="Total_Weekly_Training_Hours" name="Total_Weekly_Training_Hours" min="0" max="50" step="0.5" required aria-describedby="Total_Weekly_Training_Hours-validation Total_Weekly_Training_Hours-tooltip">
+              <span id="Total_Weekly_Training_Hours-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="High_Intensity_Training_Hours">High-Intensity Hours<span class="tooltip-icon" data-tooltip="Hours spent on high-intensity training per week (0-20)" id="High_Intensity_Training_Hours-tooltip"></span></label>
+              <input type="number" id="High_Intensity_Training_Hours" name="High_Intensity_Training_Hours" min="0" max="20" step="0.5" required aria-describedby="High_Intensity_Training_Hours-validation High_Intensity_Training_Hours-tooltip">
+              <span id="High_Intensity_Training_Hours-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Training_Load_Score">Training Load Score (0-100)<span class="tooltip-icon" data-tooltip="Subjective score of training intensity (0-100)" id="Training_Load_Score-tooltip"></span></label>
+              <input type="number" id="Training_Load_Score" name="Training_Load_Score" min="0" max="100" required aria-describedby="Training_Load_Score-validation Training_Load_Score-tooltip">
+              <span id="Training_Load_Score-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Strength_Training_Frequency">Strength Training (days/week)<span class="tooltip-icon" data-tooltip="Number of strength training sessions per week (0-7)" id="Strength_Training_Frequency-tooltip"></span></label>
+              <input type="number" id="Strength_Training_Frequency" name="Strength_Training_Frequency" min="0" max="7" required aria-describedby="Strength_Training_Frequency-validation Strength_Training_Frequency-tooltip">
+              <span id="Strength_Training_Frequency-validation" class="validation-message"></span>
+            </div>
+          </div>
+        </div>
+        <!-- Recovery Metrics -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <h3>Recovery Metrics</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="Recovery_Time_Between_Sessions">Recovery Time (hrs)<span class="tooltip-icon" data-tooltip="Average recovery time between training sessions in hours (0-48)" id="Recovery_Time_Between_Sessions-tooltip"></span></label>
+              <input type="number" id="Recovery_Time_Between_Sessions" name="Recovery_Time_Between_Sessions" min="0" max="48" step="0.5" required aria-describedby="Recovery_Time_Between_Sessions-validation Recovery_Time_Between_Sessions-tooltip">
+              <span id="Recovery_Time_Between_Sessions-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Fatigue_Level">Fatigue Level (0-10)<span class="tooltip-icon" data-tooltip="Subjective fatigue level (0 = none, 10 = extreme)" id="Fatigue_Level-tooltip"></span></label>
+              <input type="range" id="Fatigue_Level" name="Fatigue_Level" min="0" max="10" value="0" required aria-describedby="Fatigue_Level-validation Fatigue_Level-tooltip">
+              <span id="Fatigue_Level-value" class="slider-value">0</span>
+              <span id="Fatigue_Level-validation" class="validation-message"></span>
+            </div>
+          </div>
+        </div>
+        <!-- Performance Metrics -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <h3>Performance Metrics</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="Endurance_Score">Endurance Score (0-10)<span class="tooltip-icon" data-tooltip="Subjective endurance performance (0 = poor, 10 = excellent)" id="Endurance_Score-tooltip"></span></label>
+              <input type="range" id="Endurance_Score" name="Endurance_Score" min="0" max="10" value="0" required aria-describedby="Endurance_Score-validation Endurance_Score-tooltip">
+              <span id="Endurance_Score-value" class="slider-value">0</span>
+              <span id="Endurance_Score-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Sprint_Speed">Sprint Speed (m/s)<span class="tooltip-icon" data-tooltip="Average sprint speed in meters per second (0-20)" id="Sprint_Speed-tooltip"></span></label>
+              <input type="number" id="Sprint_Speed" name="Sprint_Speed" min="0" max="20" step="0.1" required aria-describedby="Sprint_Speed-validation Sprint_Speed-tooltip">
+              <span id="Sprint_Speed-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Agility_Score">Agility Score (0-10)<span class="tooltip-icon" data-tooltip="Subjective agility performance (0 = poor, 10 = excellent)" id="Agility_Score-tooltip"></span></label>
+              <input type="range" id="Agility_Score" name="Agility_Score" min="0" max="10" value="0" required aria-describedby="Agility_Score-validation Agility_Score-tooltip">
+              <span id="Agility_Score-value" class="slider-value">0</span>
+              <span id="Agility_Score-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Flexibility_Score">Flexibility Score (0-10)<span class="tooltip-icon" data-tooltip="Subjective flexibility performance (0 = poor, 10 = excellent)" id="Flexibility_Score-tooltip"></span></label>
+              <input type="range" id="Flexibility_Score" name="Flexibility_Score" min="0" max="10" value="0" required aria-describedby="Flexibility_Score-validation Flexibility_Score-tooltip">
+              <span id="Flexibility_Score-value" class="slider-value">0</span>
+              <span id="Flexibility_Score-validation" class="validation-message"></span>
+            </div>
+          </div>
+        </div>
+        <!-- Injury History -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <h3>Injury History</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="Previous_Injury_Count">Previous Injuries<span class="tooltip-icon" data-tooltip="Number of previous injuries (0-10)" id="Previous_Injury_Count-tooltip"></span></label>
+              <input type="number" id="Previous_Injury_Count" name="Previous_Injury_Count" min="0" max="10" required aria-describedby="Previous_Injury_Count-validation Previous_Injury_Count-tooltip">
+              <span id="Previous_Injury_Count-validation" class="validation-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="Previous_Injury_Type">Previous Injury Type<span class="tooltip-icon" data-tooltip="Type of the most significant previous injury" id="Previous_Injury_Type-tooltip"></span></label>
+              <select id="Previous_Injury_Type" name="Previous_Injury_Type" required aria-describedby="Previous_Injury_Type-validation Previous_Injury_Type-tooltip">
+                <option value="">Select</option>
+                <option value="None">None</option>
+                <option value="Sprain">Sprain</option>
+                <option value="Ligament Tear">Ligament Tear</option>
+                <option value="Tendonitis">Tendonitis</option>
+                <option value="Strain">Strain</option>
+                <option value="Fracture">Fracture</option>
+              </select>
+              <span id="Previous_Injury_Type-validation" class="validation-message"></span>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="submit-button">Predict Injury Risk</button>
+      </form>
+      <div id="result-container" class="result-container">
+        <h2>Risk Assessment Results</h2>
+        <div class="summary-card">
+          <div class="summary-item">
+            <span class="summary-label">Risk Level</span>
+            <span id="risk-level" class="summary-value"></span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Likelihood</span>
+            <span id="likelihood-percent" class="summary-value"></span>
+          </div>
+          <div class="summary-gauge">
+            <svg class="gauge-svg" viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00ff99;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#ff3366;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-base" r="54" cx="60" cy="60"></circle>
+              <circle class="gauge-value" r="54" cx="60" cy="60"></circle>
+            </svg>
+            <span class="gauge-text"></span>
+          </div>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <h4>Training Load</h4>
+            <svg class="radial-gauge" viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00ff99;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#ff3366;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-base" r="40" cx="50" cy="50"></circle>
+              <circle id="training-load-gauge" class="gauge-value" r="40" cx="50" cy="50"></circle>
+            </svg>
+            <span id="training-load-text" class="metric-value"></span>
+            <span id="training-load-tooltip" class="tooltip"></span>
+          </div>
+          <div class="metric-card">
+            <h4>Recovery Status</h4>
+            <svg class="radial-gauge" viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00ff99;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#ff3366;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-base" r="40" cx="50" cy="50"></circle>
+              <circle id="recovery-gauge" class="gauge-value" r="40" cx="50" cy="50"></circle>
+            </svg>
+            <span id="recovery-text" class="metric-value"></span>
+            <span id="recovery-tooltip" class="tooltip"></span>
+          </div>
+          <div class="metric-card">
+            <h4>Injury History</h4>
+            <svg class="radial-gauge" viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00ff99;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#ff3366;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-base" r="40" cx="50" cy="50"></circle>
+              <circle id="injury-history-gauge" class="gauge-value" r="40" cx="50" cy="50"></circle>
+            </svg>
+            <span id="injury-history-text" class="metric-value"></span>
+            <span id="injury-history-tooltip" class="tooltip"></span>
+          </div>
+        </div>
+        <div class="recommendations">
+          <h3>Personalized Recommendations</h3>
+          <ul class="recommendation-list"></ul>
+        </div>
+        <button class="action-button" onclick="exportPDF()">Export Results as PDF</button>
+      </div>
+    </main>
+  </div>
+  <script>
+    // Collapsible Form Sections
+    document.querySelectorAll('.form-section-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const section = header.parentElement;
+        section.classList.toggle('collapsed');
+      });
+    });
+
+    // Progress Bar Logic
+    const form = document.getElementById('predictionForm');
+    const progressFill = document.getElementById('progress-fill');
+    const progressPercent = document.getElementById('progress-percent');
+    const inputs = form.querySelectorAll('input, select');
+    const totalFields = inputs.length;
+
+    function updateProgress() {
+      let filledFields = 0;
+      inputs.forEach(input => {
+        if (input.value !== '' && (!input.required || input.checkValidity())) {
+          filledFields++;
+        }
+      });
+      const percentage = Math.round((filledFields / totalFields) * 100);
+      progressFill.style.width = `${percentage}%`;
+      progressPercent.textContent = `${percentage}%`;
+    }
+
+    inputs.forEach(input => {
+      input.addEventListener('input', updateProgress);
+      input.addEventListener('change', updateProgress);
+    });
+
+    // Slider Value Display
+    const sliders = form.querySelectorAll('input[type="range"]');
+    sliders.forEach(slider => {
+      const valueSpan = document.getElementById(`${slider.id}-value`);
+      valueSpan.textContent = slider.value;
+      slider.addEventListener('input', () => {
+        valueSpan.textContent = slider.value;
+      });
+    });
+
+    // Tooltip Functionality
+    document.querySelectorAll('.tooltip-icon').forEach(icon => {
+      // Create tooltip text element
+      const tooltipText = document.createElement('span');
+      tooltipText.classList.add('tooltip-text');
+      tooltipText.textContent = icon.getAttribute('data-tooltip');
+      icon.appendChild(tooltipText);
+
+      // Show tooltip on hover
+      icon.addEventListener('mouseenter', () => {
+        tooltipText.style.visibility = 'visible';
+        tooltipText.style.opacity = '1';
+      });
+      icon.addEventListener('mouseleave', () => {
+        tooltipText.style.visibility = 'hidden';
+        tooltipText.style.opacity = '0';
+      });
+    });
+
+    // Particle Background
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particlesArray = [];
+    const numberOfParticles = 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+
+      draw() {
+        ctx.fillStyle = 'rgba(0, 212, 255, 0.3)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // PDF Export Function
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Styling
+      const primaryColor = '#00d4ff';
+      const secondaryColor = '#ff00aa';
+      doc.setFont('Helvetica', 'bold');
+
+      // Header
+      doc.setFillColor(primaryColor);
+      doc.rect(0, 0, 210, 20, 'F');
+      doc.setTextColor('#ffffff');
+      doc.setFontSize(20);
+      doc.text('Injury Prediction System Report', 105, 12, { align: 'center' });
+
+      // Summary
+      doc.setTextColor('#000000');
+      doc.setFontSize(16);
+      doc.text('Risk Assessment Summary', 20, 30);
+      doc.setDrawColor(primaryColor);
+      doc.setLineWidth(0.5);
+      doc.line(20, 32, 190, 32);
+
+      doc.setFontSize(12);
+      doc.setFont('Helvetica', 'normal');
+      const riskLevel = document.getElementById('risk-level').textContent || 'N/A';
+      const likelihood = document.getElementById('likelihood-percent').textContent || 'N/A';
+      const gaugeText = document.querySelector('.gauge-text').textContent || '0%';
+      doc.text(`Risk Level: ${riskLevel}`, 20, 40);
+      doc.text(`Likelihood: ${likelihood}`, 20, 48);
+      doc.text(`Risk Score: ${gaugeText}`, 20, 56);
+
+      // Metrics
+      doc.setFontSize(16);
+      doc.text('Key Metrics', 20, 70);
+      doc.line(20, 72, 190, 72);
+      doc.setFontSize(12);
+      const trainingLoad = document.getElementById('training-load-text').textContent || 'N/A';
+      const recovery = document.getElementById('recovery-text').textContent || 'N/A';
+      const injuryHistory = document.getElementById('injury-history-text').textContent || 'N/A';
+      doc.text(`Training Load: ${trainingLoad}`, 20, 80);
+      doc.text(`Recovery Status: ${recovery}`, 20, 88);
+      doc.text(`Injury History: ${injuryHistory}`, 20, 96);
+
+      // Recommendations
+      doc.setFontSize(16);
+      doc.text('Recommendations', 20, 110);
+      doc.line(20, 112, 190, 112);
+      doc.setFontSize(12);
+      const recommendations = document.querySelectorAll('.recommendation-item');
+      let y = 120;
+      recommendations.forEach((rec, index) => {
+        const summary = rec.querySelector('.recommendation-summary')?.textContent || 'N/A';
+        doc.text(`${index + 1}. ${summary}`, 20, y);
+        y += 8;
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+
+      // Footer
+      doc.setFillColor(secondaryColor);
+      doc.rect(0, 280, 210, 17, 'F');
+      doc.setTextColor('#ffffff');
+      doc.setFontSize(10);
+      doc.text('Generated by Injury Prediction System', 105, 290, { align: 'center' });
+
+      // Save PDF
+      doc.save('Injury_Prediction_Report.pdf');
+    }
+  </script>
+  <script src="calculator.js"></script>
+</body>
+</html>

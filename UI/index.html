@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Injury Prediction System - Futuristic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="loader-wrapper">
+    <div class="loader"></div>
+  </div>
+  <header>
+    <nav class="navbar">
+      <div class="nav-logo">IPS</div>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-menu">
+        <li><a href="#features">Features</a></li>
+        <li><a href="calculator.html">Calculator</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="chatbot.html">Chatbot</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+  </header>
+  <section class="hero">
+    <canvas id="particle-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="header">Injury Prediction System</h1>
+      <p class="description">
+        <span class="highlight-text">Transforming athletic performance</span> through advanced predictive analytics and injury prevention intelligence.
+      </p>
+      <p class="description">
+        <span class="highlight-text">Empowering elite athletes</span> with AI-driven insights and precision-engineered recommendations.
+      </p>
+      <button class="cta-button" onclick="window.location.href='calculator.html'" aria-label="Predict & Prevent Injuries">
+        <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M4 2.5v11l9-5.5-9-5.5z" />
+        </svg>
+        Elevate Your Game
+      </button>
+    </div>
+  </section>
+  <section id="features" class="section features">
+    <div class="container">
+      <h2>Our Features</h2>
+      <p>State‑of‑the‑art tools designed to keep athletes performing at their best.</p>
+      <div class="features-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="50" height="50" viewBox="0 0 64 64" fill="currentColor">
+              <rect x="10" y="30" width="8" height="24" />
+              <rect x="26" y="20" width="8" height="34" />
+              <rect x="42" y="10" width="8" height="44" />
+            </svg>
+          </div>
+          <h3>Data Analysis</h3>
+          <p>Leverage machine learning to uncover trends and risk factors.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="50" height="50" viewBox="0 0 64 64" fill="currentColor">
+              <path d="M32 4l24 12v14c0 16-12 30-24 34C20 60 8 46 8 30V16L32 4z" />
+            </svg>
+          </div>
+          <h3>Risk Assessment</h3>
+          <p>Real‑time monitoring to predict and prevent potential injuries.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="50" height="50" viewBox="0 0 64 64" fill="currentColor">
+              <circle cx="32" cy="20" r="12" />
+              <path d="M16 52c0-8.8 7.2-16 16-16s16 7.2 16 16" />
+            </svg>
+          </div>
+          <h3>Personalized Insights</h3>
+          <p>Tailored recommendations based on individual performance metrics.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="faq" class="section faq">
+    <div class="container">
+      <h2>Frequently Asked Questions</h2>
+      <p>Common questions about our Injury Prediction System</p>
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">
+            How accurate is the injury prediction?<span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p>Our system achieves over 92% accuracy using biomechanical and historical data combined with machine learning.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">
+            Can this replace medical professionals?<span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p>No, it complements professional insights by providing proactive data‑driven recommendations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="container">
+      <p>© 2025 Injury Prediction System. All rights reserved.</p>
+    </div>
+  </footer>
+  <script src="java.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9355e0c2680a677f',t:'MTc0NTUwMDYxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

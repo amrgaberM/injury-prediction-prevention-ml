@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Injury Prediction System - Advanced Athletic Performance Analysis">
+  <title>Injury Prediction System - Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* CSS Reset and Global Variables */
+    :root {
+      --primary-color: #00e5ff;
+      --primary-hover: #0097fb;
+      --dark-bg: #0d1b2a;
+      --darker-bg: #0a1522;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-hover: rgba(0, 229, 255, 0.1);
+      --border-glow: rgba(0, 229, 255, 0.2);
+      --text-primary: #fff;
+      --text-secondary: #ccc;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      --card-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 229, 255, 0.2);
+      --transition-normal: all 0.3s ease;
+      --border-radius-sm: 8px;
+      --border-radius-md: 10px;
+      --border-radius-lg: 15px;
+      --space-xs: 5px;
+      --space-sm: 10px;
+      --space-md: 15px;
+      --space-lg: 20px;
+      --space-xl: 25px;
+      --space-xxl: 40px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Base Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* Layout Containers */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+      width: 100%;
+    }
+
+    .dashboard-container {
+      padding: var(--space-xxl) var(--space-lg);
+    }
+
+    /* Header Styles */
+    header {
+      text-align: center;
+      margin-bottom: var(--space-xxl);
+      padding: var(--space-xl) var(--space-lg);
+      border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+      position: relative;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+      transform: translateX(-50%);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: var(--primary-color);
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5), 0 0 20px rgba(0, 229, 255, 0.3);
+      letter-spacing: 2px;
+      margin-bottom: var(--space-md);
+      font-weight: 700;
+    }
+
+    h3 {
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      margin-bottom: var(--space-md);
+      letter-spacing: 0.8px;
+      position: relative;
+      display: inline-block;
+    }
+
+    h3::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-color), transparent);
+    }
+
+    h5 {
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+      font-weight: 500;
+    }
+
+    .report-meta {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-top: var(--space-lg);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    .report-meta span {
+      padding: var(--space-xs) var(--space-md);
+      background: rgba(0, 229, 255, 0.1);
+      border-radius: var(--border-radius-sm);
+      backdrop-filter: blur(5px);
+      transition: var(--transition-normal);
+    }
+
+    .report-meta span:hover {
+      background: rgba(0, 229, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Dashboard Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--space-xl);
+    }
+
+    /* Card Sizing Classes */
+    .card-col-3 {
+      grid-column: span 3;
+    }
+
+    .card-col-4 {
+      grid-column: span 4;
+    }
+
+    .card-col-6 {
+      grid-column: span 6;
+    }
+
+    .card-col-8 {
+      grid-column: span 8;
+    }
+
+    .card-col-12 {
+      grid-column: span 12;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      padding: var(--space-xl);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.05), transparent 70%);
+      pointer-events: none;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    /* Risk Summary Styles */
+    .risk-summary .gauge-container {
+      position: relative;
+      margin: var(--space-xl) auto;
+      width: 180px;
+      height: 180px;
+    }
+
+    .risk-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      justify-content: space-around;
+      margin-top: var(--space-xl);
+    }
+
+    .metric-item {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      padding: var(--space-sm) var(--space-md);
+      background: rgba(0, 229, 255, 0.05);
+      border-radius: var(--border-radius-sm);
+      transition: transform 0.2s, background 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .metric-item:hover {
+      transform: translateY(-3px);
+      background: rgba(0, 229, 255, 0.1);
+      border-color: rgba(0, 229, 255, 0.2);
+    }
+
+    .metric-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: var(--space-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      font-weight: 700;
+      text-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+    }
+
+    /* Gauge Styles */
+    .gauge-svg {
+      width: 180px;
+      height: 180px;
+      position: relative;
+      filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.5));
+      transform: rotate(-90deg);
+    }
+
+    .gauge-base {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 12;
+      r: 54;
+      cx: 60;
+      cy: 60;
+    }
+
+    .gauge-value {
+      fill: none;
+      stroke: url(#gaugeGradient);
+      stroke-width: 12;
+      stroke-linecap: round;
+      r: 54;
+      cx: 60;
+      cy: 60;
+      transition: stroke-dasharray 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      font-size: 1.8rem;
+      color: var(--text-primary);
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .gauge-text::after {
+      content: '%';
+      font-size: 0.9rem;
+      vertical-align: super;
+      margin-left: 2px;
+    }
+
+    /* Stats and Insights */
+    .stats-grid {
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--border-radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      transition: var(--transition-normal);
+      border-left: 3px solid transparent;
+    }
+
+    .stat-item:hover {
+      background: rgba(0, 229, 255, 0.1);
+      border-left-color: var(--primary-color);
+      transform: translateX(3px);
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      color: var(--primary-color);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .insights-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .insights-list li {
+      margin-bottom: var(--space-md);
+      font-size: 0.95rem;
+      padding: var(--space-md);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-sm);
+      border-left: 3px solid var(--primary-color);
+      transition: var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .insights-list li::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--primary-color);
+      transition: var(--transition-normal);
+    }
+
+    .insights-list li:hover {
+      background: rgba(0, 229, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    .insights-list li:hover::before {
+      width: 5px;
+    }
+
+    /* Recommendations */
+    .recommendation-category {
+      margin-bottom: var(--space-xl);
+    }
+
+    .category-title {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      margin-bottom: var(--space-md);
+      cursor: pointer;
+      transition: var(--transition-normal);
+      display: flex;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .category-title::before {
+      content: '▸';
+      margin-right: var(--space-sm);
+      transition: transform 0.3s;
+    }
+
+    .category-title:hover {
+      color: var(--primary-hover);
+    }
+
+    .category-title.active::before {
+      transform: rotate(90deg);
+    }
+
+    .recommendations-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .recommendation-item {
+      background: rgba(0, 229, 255, 0.08);
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      cursor: pointer;
+      transition: var(--transition-normal);
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .recommendation-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 30px;
+      background: linear-gradient(to right, transparent, rgba(0, 229, 255, 0.1));
+      opacity: 0;
+      transition: var(--transition-normal);
+    }
+
+    .recommendation-item:hover {
+      background: rgba(0, 229, 255, 0.15);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+      border-left-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .recommendation-item:hover::before {
+      opacity: 1;
+    }
+
+    .recommendation-item.completed {
+      opacity: 0.7;
+      text-decoration: line-through;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .rec-checkbox {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--primary-color);
+      cursor: pointer;
+      transition: var(--transition-normal);
+    }
+
+    .rec-checkbox:hover {
+      transform: scale(1.1);
+    }
+
+    .priority-indicator {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      min-width: 24px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .recommendation-text {
+      flex: 1;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .recommendation-detail {
+      display: none;
+      max-height: 0;
+      overflow: hidden;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: var(--space-sm);
+      padding: var(--space-sm);
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius-sm);
+      transition: all 0.3s ease-out;
+      line-height: 1.6;
+    }
+
+    .recommendation-item.expandable .recommendation-detail {
+      display: block;
+      max-height: 0;
+    }
+
+    .recommendation-item.expandable:hover .recommendation-detail,
+    .recommendation-item.expandable.expanded .recommendation-detail {
+      max-height: 200px;
+      padding: var(--space-sm);
+    }
+
+    /* Tooltips */
+    .tooltip-icon {
+      position: relative;
+      color: var(--primary-color);
+      cursor: help;
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      text-align: center;
+      line-height: 22px;
+      border-radius: 50%;
+      background: rgba(0, 229, 255, 0.1);
+      transition: var(--transition-normal);
+      margin-left: var(--space-xs);
+    }
+
+    .tooltip-icon:hover {
+      background: rgba(0, 229, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .tooltip-icon::after {
+      content: 'i';
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      width: 220px;
+      background: #222;
+      color: #fff;
+      text-align: center;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--border-radius-sm);
+      position: absolute;
+      z-index: 10;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s, visibility 0.3s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      line-height: 1.5;
+    }
+
+    .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #222 transparent transparent transparent;
+    }
+
+    .tooltip-icon:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Buttons */
+    .learn-more-btn {
+      font-size: 0.9rem;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--primary-color);
+      border: none;
+      border-radius: var(--border-radius-sm);
+      color: var(--darker-bg);
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition-normal);
+      display: inline-block;
+      margin-top: var(--space-sm);
+    }
+
+    .learn-more-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 151, 251, 0.3);
+    }
+
+    /* Chart Styles */
+    .chart-card {
+      padding-bottom: var(--space-xl);
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: var(--space-lg);
+    }
+
+    .chart-card canvas {
+      max-width: 100%;
+      height: auto !important;
+    }
+
+    /* Report Actions */
+    .report-actions {
+      text-align: center;
+      margin-top: var(--space-xxl);
+      padding: var(--space-xl);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-md);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .action-button {
+      padding: 14px 28px;
+      background: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
+      border: none;
+      border-radius: 30px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin: 0 var(--space-md);
+      transition: var(--transition-normal);
+      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    .action-button:hover {
+      background: linear-gradient(45deg, var(--primary-hover), var(--primary-color));
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 151, 251, 0.4);
+    }
+
+    .action-button:hover::before {
+      transform: translateX(100%);
+    }
+
+    .action-button:active {
+      transform: translateY(1px);
+    }
+
+    /* Animation for loading elements */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      animation: fadeIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.15s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+    .card:nth-child(4) { animation-delay: 0.25s; }
+    .card:nth-child(5) { animation-delay: 0.3s; }
+    .card:nth-child(6) { animation-delay: 0.35s; }
+    .card:nth-child(7) { animation-delay: 0.4s; }
+    .card:nth-child(8) { animation-delay: 0.45s; }
+    .card:nth-child(9) { animation-delay: 0.5s; }
+    .card:nth-child(10) { animation-delay: 0.55s; }
+    .card:nth-child(11) { animation-delay: 0.6s; }
+    .card:nth-child(12) { animation-delay: 0.65s; }
+    .card:nth-child(13) { animation-delay: 0.7s; }
+    .card:nth-child(14) { animation-delay: 0.75s; }
+    .card:nth-child(15) { animation-delay: 0.8s; }
+
+    /* Media Queries */
+    @media (max-width: 1400px) {
+      .card-col-3, .card-col-4 {
+        grid-column: span 6;
+      }
+      
+      .card-col-8 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .card-col-6 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .card-col-3, .card-col-4, .card-col-6, .card-col-8, .card-col-12 {
+        grid-column: span 12;
+      }
+
+      .risk-metrics {
+        flex-direction: column;
+      }
+      
+      .metric-item {
+        margin: var(--space-xs) 0;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .action-button {
+        margin: var(--space-sm);
+        width: 80%;
+        max-width: 300px;
+      }
+      
+      .gauge-svg {
+        width: 140px;
+        height: 140px;
+      }
+
+      .gauge-container {
+        width: 140px;
+        height: 140px;
+      }
+
+      .gauge-base, .gauge-value {
+        r: 46;
+        cx: 60;
+        cy: 60;
+      }
+
+      .gauge-text {
+        font-size: 1.5rem;
+      }
+
+      .recommendation-item {
+        flex-wrap: wrap;
+      }
+      
+      .report-meta span {
+        margin: var(--space-xs);
+      }
+
+      .chart-container {
+        min-height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: var(--space-md);
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      h3 {
+        font-size: 1.2rem;
+      }
+      
+      .metric-item {
+        min-width: 100%;
+      }
+
+      .chart-container {
+        min-height: 200px;
+      }
+
+      .gauge-svg {
+        width: 120px;
+        height: 120px;
+      }
+
+      .gauge-container {
+        width: 120px;
+        height: 120px;
+      }
+
+      .gauge-base, .gauge-value {
+        r: 40;
+        cx: 60;
+        cy: 60;
+      }
+
+      .gauge-text {
+        font-size: 1.3rem;
+      }
+
+      .action-button {
+        font-size: 1rem;
+        padding: 12px 24px;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      
+      .card {
+        break-inside: avoid;
+        background: white;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+      
+      .report-actions {
+        display: none;
+      }
+      
+      h1, h3 {
+        color: #333;
+        text-shadow: none;
+      }
+      
+      .metric-value, .stat-value {
+        color: #0097fb;
+      }
+
+      .chart-card {
+        page-break-inside: avoid;
+      }
+
+      .gauge-svg {
+        filter: none;
+      }
+
+      .gauge-value {
+        stroke: #0097fb;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container dashboard-container">
+    <header>
+      <h1>Injury Prediction Report</h1>
+      <div class="report-meta">
+        <span id="reportDate">Loading...</span>
+        <span id="reportId">Loading...</span>
+      </div>
+    </header>
+    <main>
+      <div class="dashboard-grid">
+        <!-- Risk Summary -->
+        <div class="card risk-summary card-col-4">
+          <h3>Risk Summary</h3>
+          <div class="gauge-container">
+            <svg class="gauge-svg" viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#facc15;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-base" r="54" cx="60" cy="60"></circle>
+              <circle class="gauge-value" r="54" cx="60" cy="60"></circle>
+            </svg>
+            <span class="gauge-text">0</span>
+          </div>
+          <div class="risk-metrics">
+            <div class="metric-item">
+              <span class="metric-label">Risk Level</span>
+              <span id="riskLevel" class="metric-value">Unknown</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Likelihood</span>
+              <span id="likelihoodPercent" class="metric-value">0%</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Confidence</span>
+              <span id="confidencePercent" class="metric-value">0%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Profile Card -->
+        <div class="card profile-card card-col-4">
+          <h3>Profile</h3>
+          <div id="profileCard" class="stats-grid"></div>
+        </div>
+        <!-- Summary Card -->
+        <div class="card summary-card card-col-4">
+          <h3>Summary</h3>
+          <div id="summaryCard" class="stats-grid"></div>
+        </div>
+        <!-- AI Smart Insights -->
+        <div class="card insights-card card-col-6">
+          <h3>AI Smart Insights</h3>
+          <ul id="insightsList" class="insights-list"></ul>
+        </div>
+        <!-- Risk Contribution Breakdown -->
+        <div class="card chart-card card-col-6">
+          <h3>Risk Contribution Breakdown</h3>
+          <div class="chart-container">
+            <canvas id="trendAnalysisChart"></canvas>
+          </div>
+        </div>
+        <!-- Factor Impact -->
+        <div class="card chart-card card-col-6">
+          <h3>Factor Impact</h3>
+          <div class="chart-container">
+            <canvas id="factorImpactChart"></canvas>
+          </div>
+        </div>
+        <!-- Feature Impact on Risk -->
+        <div class="card chart-card card-col-6">
+          <h3>Feature Impact on Risk</h3>
+          <div class="chart-container">
+            <canvas id="featureImportanceChart"></canvas>
+          </div>
+        </div>
+        <!-- Feature Importance -->
+        <div class="card chart-card card-col-6">
+          <h3>Feature Importance</h3>
+          <div class="chart-container">
+            <canvas id="riskBreakdownChart"></canvas>
+          </div>
+        </div>
+        <!-- Risk Severity Distribution -->
+        <div class="card chart-card card-col-4">
+          <h3>Risk Severity Distribution</h3>
+          <div class="chart-container">
+            <canvas id="riskDonutChart"></canvas>
+          </div>
+        </div>
+        <!-- Top Contributors -->
+        <div class="card chart-card card-col-8">
+          <h3>Top Contributors</h3>
+          <div class="chart-container">
+            <canvas id="riskHorizontalBar"></canvas>
+          </div>
+        </div>
+        <!-- Model Confidence -->
+        <div class="card chart-card card-col-4">
+          <h3>Model Confidence</h3>
+          <div class="chart-container">
+            <canvas id="confidenceGaugeChart"></canvas>
+          </div>
+        </div>
+        <!-- Training vs Recovery -->
+        <div class="card chart-card card-col-4">
+          <h3>Training vs Recovery</h3>
+          <div class="chart-container">
+            <canvas id="trainingRecoveryChart"></canvas>
+          </div>
+        </div>
+        <!-- Performance Stability -->
+        <div class="card chart-card card-col-4">
+          <h3>Performance Stability</h3>
+          <div class="chart-container">
+            <canvas id="performanceScoreChart"></canvas>
+          </div>
+        </div>
+        <!-- Fatigue Risk -->
+        <div class="card chart-card card-col-4">
+          <h3>Fatigue Risk</h3>
+          <div class="chart-container">
+            <canvas id="fatigueMeterChart"></canvas>
+          </div>
+        </div>
+        <!-- Personalized Recommendations -->
+        <div class="card recommendations-card card-col-12">
+          <h3>Personalized Recommendations</h3>
+          <div id="recommendationsList" class="recommendations-list"></div>
+        </div>
+      </div>
+      <!-- Report Actions -->
+      <div class="report-actions">
+        <button class="action-button" id="downloadPDF">Download PDF</button>
+        <button class="action-button" id="printReport">Print Report</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="report.js"></script>
+</body>
+</html>
