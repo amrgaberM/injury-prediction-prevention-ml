@@ -18,7 +18,7 @@ Injury Prediction and Prevention is a sophisticated web application designed to 
 - External API: Integrates Cohere's NLP for chatbot functionality.
 
 ## Project Structure
-njury-Prediction-and-Prevention/
+Injury-Prediction-and-Prevention/
 api/
 app.py                    # Flask server for API and frontend
 preprocessing.py          # Data preprocessing and feature engineering
