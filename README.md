@@ -20,23 +20,23 @@ Injury Prediction and Prevention is a sophisticated web application designed to 
 ## Project Structure
 Injury-Prediction-and-Prevention/
 ├── api/
+│   ├── app.py                 # Flask server for API and frontend
 │   ├── preprocessing.py       # Data preprocessing and feature engineering
-│   ├── app.py                # Flask server for API and frontend
+│   ├── predict.py             # Injury risk prediction logic
 │   ├── recommendation.py      # Personalized prevention recommendations
-│   ├── predict.py            # Injury risk prediction logic
 ├── model/
-│   ├── rf_injury_model.pkl   # Trained RandomForest model
-│   ├── xgboost_injury_model.pkl # Trained XGBoost model
-│   ├── likelihood_calibrator.pkl # Probability calibration model
-│   ├── rf_target_encoder.pkl  # RandomForest label encoder
-│   ├── xgb_target_encoder.pkl # XGBoost label encoder
+│   ├── likelihood_calibrator.pkl  # Probability calibration model
+│   ├── rf_injury_model.pkl        # Trained RandomForest model
+│   ├── rf_target_encoder.pkl      # RandomForest label encoder
+│   ├── xgboost_injury_model.pkl   # Trained XGBoost model
+│   ├── xgb_target_encoder.pkl     # XGBoost label encoder
 ├── notebooks/
-│   ├── RandomForest.ipynb    # RandomForest model training
-│   ├── XGBOOST.ipynb         # XGBoost model training
-│   ├── CalibrateLikelihood.ipynb # Probability calibration
-├── UI2/                      # Frontend HTML, CSS, JS files
-├── README.md                 # Project documentation
-└── requirements.txt          # Python dependencies
+│   ├── CalibrateLikelihood.ipynb  # Probability calibration
+│   ├── RandomForest.ipynb         # RandomForest model training
+│   ├── XGBOOST.ipynb              # XGBoost model training
+├── UI2/                          # Frontend HTML, CSS, JS files
+├── README.md                     # Project documentation
+└── requirements.txt              # Python dependencies
 
 ## Getting Started
 
