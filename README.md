@@ -33,7 +33,7 @@ Injury Prediction and Prevention is a sophisticated web application designed to 
   - `CalibrateLikelihood.ipynb`: Probability calibration
   - `RandomForest.ipynb`: RandomForest model training
   - `XGBOOST.ipynb`: XGBoost model training
-- **UI2/**: Frontend HTML, CSS, JS files
+- **UI/**: Frontend HTML, CSS, JS files
 - **README.md**: Project documentation
 - **requirements.txt**: Python dependencies
 
@@ -56,16 +56,16 @@ Injury Prediction and Prevention is a sophisticated web application designed to 
 
 3. Install Dependencies:
    pip install -r requirements.txt
-   Example requirements.txt:
-   flask==2.3.3
-   flask-cors==4.0.1
-   pandas==2.2.2
-   numpy==1.26.4
-   scikit-learn==1.5.1
-   xgboost==2.1.1
-   joblib==1.4.2
-   requests==2.32.3
-   imbalanced-learn==0.12.3
+   Required packages (in requirements.txt):
+flask==2.3.3
+flask-cors==4.0.1
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+xgboost==2.1.1
+joblib==1.4.2
+requests==2.32.3
+imbalanced-learn==0.12.3
 
 4. Configure Cohere API:
    Add your Cohere API token to api/app.py:
