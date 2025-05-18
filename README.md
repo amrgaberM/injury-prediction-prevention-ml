@@ -18,25 +18,24 @@ Injury Prediction and Prevention is a sophisticated web application designed to 
 - External API: Integrates Cohere's NLP for chatbot functionality.
 
 ## Project Structure
-Injury-Prediction-and-Prevention/
-api/
-app.py                    # Flask server for API and frontend
-preprocessing.py          # Data preprocessing and feature engineering
-predict.py                # Injury risk prediction logic
-recommendation.py         # Personalized prevention recommendations
-model/
-likelihood_calibrator.pkl # Probability calibration model
-rf_injury_model.pkl       # Trained RandomForest model
-rf_target_encoder.pkl     # RandomForest label encoder
-xgboost_injury_model.pkl  # Trained XGBoost model
-xgb_target_encoder.pkl    # XGBoost label encoder
-notebooks/
-CalibrateLikelihood.ipynb # Probability calibration
-RandomForest.ipynb        # RandomForest model training
-XGBOOST.ipynb             # XGBoost model training
-UI2/                        # Frontend HTML, CSS, JS files
-README.md                   # Project documentation
-requirements.txt            # Python dependencies
+- **api/**
+  - `app.py`: Flask server for API and frontend
+  - `preprocessing.py`: Data preprocessing and feature engineering
+  - `predict.py`: Injury risk prediction logic
+  - `recommendation.py`: Personalized prevention recommendations
+- **model/**
+  - `likelihood_calibrator.pkl`: Probability calibration model
+  - `rf_injury_model.pkl`: Trained RandomForest model
+  - `rf_target_encoder.pkl`: RandomForest label encoder
+  - `xgboost_injury_model.pkl`: Trained XGBoost model
+  - `xgb_target_encoder.pkl`: XGBoost label encoder
+- **notebooks/**
+  - `CalibrateLikelihood.ipynb`: Probability calibration
+  - `RandomForest.ipynb`: RandomForest model training
+  - `XGBOOST.ipynb`: XGBoost model training
+- **UI2/**: Frontend HTML, CSS, JS files
+- **README.md**: Project documentation
+- **requirements.txt**: Python dependencies
 
 ## Getting Started
 
