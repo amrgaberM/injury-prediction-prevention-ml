@@ -76,7 +76,7 @@ Required packages (in requirements.txt):
    - notebooks/RandomForest.ipynb
    - notebooks/XGBOOST.ipynb
    - notebooks/CalibrateLikelihood.ipynb
-  # Ensure .pkl files are in model/.
+  #### Ensure .pkl files are in model/.
 
 6. Verify Frontend:
    Confirm UI/ contains index.html, calculator.html, about.html, and chatbot.html.
