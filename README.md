@@ -57,15 +57,15 @@ Injury Prediction and Prevention is a sophisticated web application designed to 
 3. Install Dependencies:
    pip install -r requirements.txt
 Required packages (in requirements.txt):
-flask==2.3.3: Web framework for the application
-flask-cors==4.0.1: Handles cross-origin requests
-pandas==2.2.2: Data manipulation and analysis
-numpy==1.26.4: Numerical computations
-scikit-learn==1.5.1: Machine learning utilities
-xgboost==2.1.1: Gradient boosting for predictions
-joblib==1.4.2: Model serialization
-requests==2.32.3: HTTP requests for API calls
-imbalanced-learn==0.12.3: Handles imbalanced datasets
+-flask==2.3.3: Web framework for the application
+-flask-cors==4.0.1: Handles cross-origin requests
+-pandas==2.2.2: Data manipulation and analysis
+-numpy==1.26.4: Numerical computations
+-scikit-learn==1.5.1: Machine learning utilities
+-xgboost==2.1.1: Gradient boosting for predictions
+-joblib==1.4.2: Model serialization
+-requests==2.32.3: HTTP requests for API calls
+-imbalanced-learn==0.12.3: Handles imbalanced datasets
 
 4. Configure Cohere API:
    Add your Cohere API token to api/app.py:
